@@ -1775,5 +1775,34 @@ const stEl=document.getElementById('stabs');
 stEl.style.cssText='position:absolute;top:10px;right:320px;display:flex;gap:5px;z-index:10';
 let selS=null;
 STABS.forEach(st=>{
-  const b=document.createElement('button');
-  b.className='
+  b.className='stab';
+  b.textContent=st.title;
+  b.title=st.title;
+  b.style.cssText=`color:${st.c};border-color:${st.c};opacity:0.55;padding:4px 10px;border-radius:16px;border:1px solid;font-size:10px;font-weight:600;cursor:pointer;background:#161b22`;
+  b.onclick=()=>{
+    if(selS===st.id){
+      selS=null;
+      NODES.forEach(n=>visNodes.update({id:n.id,hidden:false}));
+      document.querySelectorAll('.stab').forEach(x=>x.style.opacity='0.55');
+    } else {
+      selS=st.id;
+      const secId=st.id;
+      NODES.forEach(n=>{
+        const show=n.id===secId||n.sec==='s'+secId[1];
+        visNodes.update({id:n.id,hidden:!show});
+      });
+      document.querySelectorAll('.stab').forEach(x=>x.style.opacity='0.4');
+      b.style.opacity='1';
+      setTimeout(()=>net.fit({nodes:NODES.filter(n=>n.sec==='s'+secId[1]||n.id===secId).map(n=>n.id),animation:{duration:600}}),50);
+    }
+  };
+  stEl.appendChild(b);
+});
+
+net.once('stabilizationIterationsDone',()=>{
+  net.setOptions({physics:{enabled:false}});
+  net.fit({animation:{duration:800}});
+});
+</script>
+</body>
+</html>
