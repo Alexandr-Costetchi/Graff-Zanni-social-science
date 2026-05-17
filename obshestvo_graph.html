@@ -73,6 +73,19 @@ main{display:flex;flex:1;overflow:hidden;position:relative}
 .dmat-link:hover{background:#161b22;border-color:#58a6ff;color:#79c0ff}
 .dmat-ico{font-size:14px;flex-shrink:0}
 .dmat-name{flex:1;line-height:1.3}
+/* ── TAG SYSTEM ─────────────────────────────────────────────── */
+.dtags{display:flex;flex-wrap:wrap;gap:4px;margin:6px 0 8px;align-items:center}
+.dtag{padding:2px 7px;border-radius:10px;font-size:12px;background:#21262d;color:#c9d1d9;white-space:nowrap;line-height:1.4}
+.dtag-diff{font-weight:600;font-size:11px}
+.dtag-imp{color:#e3b341;font-size:13px;letter-spacing:-1px}
+.dtag-traps{background:#2d1212;color:#ff7b72}
+.dtag-mem{background:#0c1f3d;color:#79c0ff}
+.diff-btn{padding:3px 7px;border-radius:14px;border:1px solid #30363d;font-size:11px;cursor:pointer;background:#0d1117;color:#8b949e;transition:all .2s;margin-left:2px}
+.diff-btn:hover,.diff-btn.active{border-color:#58a6ff;color:#e6edf3;background:#161b22}
+.imp-filter{display:flex;gap:3px;align-items:center;margin-left:6px}
+.imp-btn{padding:3px 6px;border-radius:12px;border:1px solid #30363d;font-size:10px;cursor:pointer;background:#0d1117;color:#8b949e;transition:all .2s;white-space:nowrap}
+.imp-btn:hover,.imp-btn.active{border-color:#e3b341;color:#e3b341;background:#161b22}
+
 </style>
 </head>
 <body>
@@ -88,6 +101,15 @@ main{display:flex;flex:1;overflow:hidden;position:relative}
     <button class="fb active" data-type="s5" style="color:#ff7b72;border-color:#ff7b72">5 Право</button>
   </div>
   <div class="stats" id="stats"></div>
+  <div style="display:flex;align-items:center;gap:3px;margin-left:4px;flex-shrink:0">
+    <button class="diff-btn active" data-mode="section" onclick="applyColorMode('section')" title="Цвет по разделу">🗂️ Раздел</button>
+    <button class="diff-btn" data-mode="difficulty" onclick="applyColorMode('difficulty')" title="Цвет по сложности">🎨 Сложность</button>
+  </div>
+  <div class="imp-filter">
+    <button class="imp-btn" data-imp="1" onclick="applyImpFilter(1)" title="Фильтр: любые">⭐</button>
+    <button class="imp-btn" data-imp="2" onclick="applyImpFilter(2)" title="Фильтр: часто">⭐⭐</button>
+    <button class="imp-btn" data-imp="3" onclick="applyImpFilter(3)" title="Фильтр: обязательные">⭐⭐⭐</button>
+  </div>
 </header>
 <main>
   <div id="graph"></div>
@@ -768,6 +790,97 @@ const MATS={
   't5_20':[{i:'📖',n:'Безрукова: Блок №5 «Право»',u:'https://disk.yandex.ru/client/disk/%F0%9F%8F%BA%D0%92%D0%B5%D1%80%D0%BD%D1%8B%D0%B9%20%D0%BA%D1%83%D1%80%D1%81%20%20%E2%9A%96%EF%B8%8F%2F%E2%9A%96%EF%B8%8F%D0%9E%D0%B1%D1%89%D0%B5%D1%81%D1%82%D0%B2%D0%BE%D0%B7%D0%BD%D0%B0%D0%BD%D0%B8%D0%B5/2%20%D0%91%D0%B5%D0%B7%D1%80%D1%83%D0%BA%D0%BE%D0%B2%D0%B0'},{i:'📋',n:'КЛ «Право»: 30 вариантов',u:'https://disk.yandex.ru/client/disk/%F0%9F%8F%BA%D0%92%D0%B5%D1%80%D0%BD%D1%8B%D0%B9%20%D0%BA%D1%83%D1%80%D1%81%20%20%E2%9A%96%EF%B8%8F%2F%E2%9A%96%EF%B8%8F%D0%9E%D0%B1%D1%89%D0%B5%D1%81%D1%82%D0%B2%D0%BE%D0%B7%D0%BD%D0%B0%D0%BD%D0%B8%D0%B5/%D0%98%D1%82%D0%BE%D0%B3%D0%BE%D0%B2%D1%8B%D0%B9%20%D0%9F%D0%BE%D0%B2%D1%82%D0%BE%D1%80'},{i:'🎥',n:'Видеолекции: Право',u:'https://disk.yandex.ru/client/disk/%F0%9F%8F%BA%D0%92%D0%B5%D1%80%D0%BD%D1%8B%D0%B9%20%D0%BA%D1%83%D1%80%D1%81%20%20%E2%9A%96%EF%B8%8F%2F%E2%9A%96%EF%B8%8F%D0%9E%D0%B1%D1%89%D0%B5%D1%81%D1%82%D0%B2%D0%BE%D0%B7%D0%BD%D0%B0%D0%BD%D0%B8%D0%B5/%D0%92%D0%B8%D0%B4%D0%B5%D0%BE'},{i:'🔍',n:'Интересное по праву',u:'https://disk.yandex.ru/client/disk/%F0%9F%8F%BA%D0%92%D0%B5%D1%80%D0%BD%D1%8B%D0%B9%20%D0%BA%D1%83%D1%80%D1%81%20%20%E2%9A%96%EF%B8%8F%2F%E2%9A%96%EF%B8%8F%D0%9E%D0%B1%D1%89%D0%B5%D1%81%D1%82%D0%B2%D0%BE%D0%B7%D0%BD%D0%B0%D0%BD%D0%B8%D0%B5/5%20%D0%9F%D0%A0%D0%90%D0%92%D0%9E/%D0%98%D0%BD%D1%82%D0%B5%D1%80%D0%B5%D1%81%D0%BD%D0%BE%D0%B5%20%D0%BF%D0%BE%20%D0%BF%D1%80%D0%B0%D0%B2%D1%83'},{i:'📚',n:'Занятие 6: Органы государственной власти (4.6, 5.20)',u:'https://disk.yandex.ru/client/disk/%F0%9F%8F%BA%D0%92%D0%B5%D1%80%D0%BD%D1%8B%D0%B9%20%D0%BA%D1%83%D1%80%D1%81%20%20%E2%9A%96%EF%B8%8F%2F%E2%9A%96%EF%B8%8F%D0%9E%D0%B1%D1%89%D0%B5%D1%81%D1%82%D0%B2%D0%BE%D0%B7%D0%BD%D0%B0%D0%BD%D0%B8%D0%B5/4%20%D0%9F%D0%9E%D0%9B%D0%98%D0%A2%D0%98%D0%9A%D0%90/%D0%97%D0%90%D0%9D%D0%AF%D0%A2%D0%98%D0%95%206.%20%D0%9E%D1%80%D0%B3%D0%B0%D0%BD%D1%8B%20%D0%B3%D0%BE%D1%81.%20%D0%B2%D0%BB%D0%B0%D1%81%D1%82%D0%B8'},{i:'🏛️',n:'Правоохранительные органы (презентация)',u:'https://disk.yandex.ru/client/disk/%F0%9F%8F%BA%D0%92%D0%B5%D1%80%D0%BD%D1%8B%D0%B9%20%D0%BA%D1%83%D1%80%D1%81%20%20%E2%9A%96%EF%B8%8F%2F%E2%9A%96%EF%B8%8F%D0%9E%D0%B1%D1%89%D0%B5%D1%81%D1%82%D0%B2%D0%BE%D0%B7%D0%BD%D0%B0%D0%BD%D0%B8%D0%B5/Pravoohranitelnye-organy-Rossijskoderacii.pptx'},{i:'📝',n:'Конспекты по праву',u:'https://disk.yandex.ru/client/disk/%F0%9F%8F%BA%D0%92%D0%B5%D1%80%D0%BD%D1%8B%D0%B9%20%D0%BA%D1%83%D1%80%D1%81%20%20%E2%9A%96%EF%B8%8F%2F%E2%9A%96%EF%B8%8F%D0%9E%D0%B1%D1%89%D0%B5%D1%81%D1%82%D0%B2%D0%BE%D0%B7%D0%BD%D0%B0%D0%BD%D0%B8%D0%B5/5%20%D0%9F%D0%A0%D0%90%D0%92%D0%9E/1%20%D0%BA%D0%BE%D0%BD%D1%81%D0%BF%D0%B5%D0%BA%D1%82%D1%8B'}],
 };
 NODES.forEach(nd=>{nd.mats=MATS[nd.id]||[];});
+// ── VISUAL TAG SYSTEM ─────────────────────────────────────────
+// lvl: 📘 базовый | 📗 средний | 📕 сложный
+// imp: 1=⭐ | 2=⭐⭐ | 3=⭐⭐⭐ (важность для ЕГЭ)
+// traps: 🔥 ошибка | ☠️ путаница | ❗ вторая часть | 🎯 гарантированно | 🧩 различие
+// mem: 🧱 фундамент | 🧠 понять | 📝 выучить | 🔁 повторять | ⚡ ассоциация
+// color: 🟢 легко | 🟡 средне | 🟠 сложно | 🔴 критично
+const DIFF_COL={
+  '🟢':{c:'#3fb950',bg:'#0c3321',label:'Легко'},
+  '🟡':{c:'#e3b341',bg:'#3b2d00',label:'Средне'},
+  '🟠':{c:'#ffa657',bg:'#3d2500',label:'Сложно'},
+  '🔴':{c:'#ff7b72',bg:'#5c1010',label:'Критично'},
+};
+const IMP_STR=['','⭐','⭐⭐','⭐⭐⭐'];
+const TAGS={
+'t1_1':{sphere:'🧠👥',lvl:'📗',imp:3,traps:'🔥☠️',mem:'🧱⚡',color:'🟡'},
+'t1_2':{sphere:'🧠',lvl:'📗',imp:2,traps:'🔥',mem:'📝🔁',color:'🟡'},
+'t1_3':{sphere:'🧠',lvl:'📗',imp:3,traps:'🔥☠️',mem:'🧱🧠',color:'🟡'},
+'t1_4':{sphere:'🧠',lvl:'📗',imp:2,traps:'🔥',mem:'📝🔁',color:'🟡'},
+'t1_5':{sphere:'🧠',lvl:'📕',imp:3,traps:'☠️🧩',mem:'🧠',color:'🟠'},
+'t1_6':{sphere:'🧠👥',lvl:'📘',imp:3,traps:'☠️',mem:'🧱⚡',color:'🟢'},
+'t1_7':{sphere:'🧠👥',lvl:'📗',imp:2,traps:'🔥',mem:'📝⚡',color:'🟡'},
+'t1_8':{sphere:'🧠👥',lvl:'📘',imp:2,traps:'🔥',mem:'📝🔁',color:'🟢'},
+'t1_9':{sphere:'🧠🌍',lvl:'📗',imp:2,traps:'☠️',mem:'🧠⚡',color:'🟡'},
+'t1_10':{sphere:'🧠',lvl:'📗',imp:3,traps:'☠️🧩',mem:'📝🔁',color:'🟡'},
+'t1_11':{sphere:'🧠',lvl:'📗',imp:3,traps:'🔥☠️❗',mem:'🧠📝',color:'🟡'},
+'t1_12':{sphere:'🧠🔬',lvl:'📗',imp:2,traps:'🔥',mem:'📝🔁',color:'🟡'},
+'t1_13':{sphere:'🧠📚',lvl:'📘',imp:2,traps:'🔥',mem:'📝🔁',color:'🟢'},
+'t1_14':{sphere:'🧠⛪',lvl:'📘',imp:1,traps:'❗',mem:'📝',color:'🟢'},
+'t1_15':{sphere:'🧠🎨',lvl:'📘',imp:1,traps:'❗',mem:'⚡',color:'🟢'},
+'t2_1':{sphere:'💰',lvl:'📗',imp:2,traps:'🔥',mem:'🧱🧠',color:'🟡'},
+'t2_2':{sphere:'💰',lvl:'📗',imp:2,traps:'🔥',mem:'📝⚡',color:'🟡'},
+'t2_3':{sphere:'💰',lvl:'📗',imp:3,traps:'🔥',mem:'📝🔁',color:'🟡'},
+'t2_4':{sphere:'💰',lvl:'📘',imp:2,traps:'🔥',mem:'🧠⚡',color:'🟢'},
+'t2_5':{sphere:'💰🛒',lvl:'📕',imp:3,traps:'🔥☠️🧩',mem:'🧠📝',color:'🔴'},
+'t2_6':{sphere:'💰🛒',lvl:'📕',imp:3,traps:'🔥☠️',mem:'📝🔁',color:'🟠'},
+'t2_7':{sphere:'💰👷',lvl:'📗',imp:3,traps:'🔥☠️🧩',mem:'📝🔁',color:'🟡'},
+'t2_8':{sphere:'💰🏭',lvl:'📕',imp:3,traps:'🔥🧩',mem:'🧠📝',color:'🟠'},
+'t2_9':{sphere:'💰🏭',lvl:'📗',imp:3,traps:'🔥❗',mem:'📝🔁',color:'🟡'},
+'t2_10':{sphere:'💰',lvl:'📕',imp:3,traps:'🔥☠️',mem:'🧠📝',color:'🔴'},
+'t2_11':{sphere:'💰',lvl:'📗',imp:2,traps:'🔥',mem:'📝',color:'🟡'},
+'t2_12':{sphere:'💰📉',lvl:'📗',imp:3,traps:'🔥❗',mem:'📝🔁',color:'🟡'},
+'t2_13':{sphere:'💰🏛️',lvl:'📕',imp:3,traps:'🔥☠️🧩',mem:'🧠📝',color:'🟠'},
+'t2_14':{sphere:'💰🏛️',lvl:'📗',imp:2,traps:'🔥',mem:'📝',color:'🟡'},
+'t2_15':{sphere:'💰🏛️',lvl:'📗',imp:3,traps:'🔥❗',mem:'📝🔁',color:'🟡'},
+'t2_16':{sphere:'💰📈',lvl:'📕',imp:3,traps:'🔥☠️',mem:'🧠📝',color:'🟠'},
+'t2_17':{sphere:'💰📉',lvl:'📗',imp:2,traps:'🔥',mem:'⚡📝',color:'🟡'},
+'t2_18':{sphere:'💰🌍',lvl:'📕',imp:3,traps:'🔥❗',mem:'🧠📝',color:'🟠'},
+'t3_1':{sphere:'👥',lvl:'📗',imp:3,traps:'🔥🧩',mem:'📝🔁',color:'🟡'},
+'t3_2':{sphere:'👥',lvl:'📗',imp:2,traps:'🔥☠️',mem:'📝',color:'🟡'},
+'t3_3':{sphere:'👥',lvl:'📘',imp:1,traps:'❗',mem:'⚡',color:'🟢'},
+'t3_4':{sphere:'👥🪜',lvl:'📗',imp:3,traps:'🔥☠️🧩',mem:'📝⚡',color:'🟡'},
+'t3_5':{sphere:'👥🧬',lvl:'📗',imp:3,traps:'🔥❗',mem:'📝🔁',color:'🟡'},
+'t3_6':{sphere:'👥',lvl:'📗',imp:3,traps:'🔥☠️🧩',mem:'📝⚡',color:'🟡'},
+'t3_7':{sphere:'👥⚠️',lvl:'📗',imp:2,traps:'🔥🧩',mem:'🧠📝',color:'🟡'},
+'t3_8':{sphere:'👥⚠️',lvl:'📗',imp:2,traps:'🔥',mem:'📝⚡',color:'🟡'},
+'t3_9':{sphere:'👥🏛️',lvl:'📘',imp:1,traps:'❗',mem:'📝',color:'🟢'},
+'t3_10':{sphere:'👥',lvl:'📘',imp:1,traps:'❗',mem:'⚡',color:'🟢'},
+'t4_1':{sphere:'🏛️',lvl:'📕',imp:3,traps:'🔥☠️🧩',mem:'🧠📝',color:'🔴'},
+'t4_2':{sphere:'🏛️',lvl:'📕',imp:3,traps:'🔥❗',mem:'🧱📝',color:'🟠'},
+'t4_3':{sphere:'🏛️',lvl:'📗',imp:3,traps:'🔥☠️',mem:'🧱📝',color:'🟡'},
+'t4_4':{sphere:'🏛️',lvl:'📕',imp:3,traps:'🔥☠️🧩❗',mem:'📝🔁',color:'🔴'},
+'t4_5':{sphere:'🏛️',lvl:'📗',imp:3,traps:'🔥❗',mem:'📝🔁',color:'🟡'},
+'t4_6':{sphere:'🏛️',lvl:'📕',imp:3,traps:'🔥❗',mem:'📝🔁',color:'🔴'},
+'t4_7':{sphere:'🏛️',lvl:'📗',imp:2,traps:'🔥',mem:'📝',color:'🟡'},
+'t4_8':{sphere:'🏛️🗳️',lvl:'📗',imp:2,traps:'🔥',mem:'⚡📝',color:'🟡'},
+'t4_9':{sphere:'🏛️',lvl:'📗',imp:2,traps:'🔥🧩',mem:'📝🔁',color:'🟡'},
+'t4_10':{sphere:'🏛️🗳️',lvl:'📕',imp:3,traps:'🔥☠️🧩❗',mem:'📝🔁',color:'🔴'},
+'t4_11':{sphere:'🏛️',lvl:'📕',imp:2,traps:'🔥🧩',mem:'🧠📝',color:'🟠'},
+'t4_12':{sphere:'🏛️',lvl:'📗',imp:2,traps:'🔥',mem:'⚡🧠',color:'🟡'},
+'t5_1':{sphere:'⚖️',lvl:'📗',imp:3,traps:'🔥🧱',mem:'🧱📝',color:'🟡'},
+'t5_2':{sphere:'⚖️📜',lvl:'📗',imp:3,traps:'🔥❗',mem:'📝🔁',color:'🟡'},
+'t5_3':{sphere:'⚖️',lvl:'📕',imp:3,traps:'☠️🧩',mem:'📝🔁',color:'🟠'},
+'t5_4':{sphere:'⚖️',lvl:'📗',imp:2,traps:'🔥🧩',mem:'📝',color:'🟡'},
+'t5_5':{sphere:'⚖️',lvl:'📕',imp:3,traps:'🔥☠️🧩❗',mem:'📝🔁',color:'🟠'},
+'t5_6':{sphere:'⚖️🏛️📜',lvl:'📕',imp:3,traps:'🔥❗🎯',mem:'📝🔁',color:'🔴'},
+'t5_7':{sphere:'⚖️🕊️',lvl:'📗',imp:3,traps:'🔥❗🎯',mem:'📝🔁',color:'🟡'},
+'t5_8':{sphere:'⚖️',lvl:'📕',imp:3,traps:'🔥☠️🧩❗',mem:'📝🔁',color:'🔴'},
+'t5_9':{sphere:'⚖️🧬',lvl:'📗',imp:3,traps:'🔥❗',mem:'📝🔁',color:'🟡'},
+'t5_10':{sphere:'⚖️👷',lvl:'📕',imp:3,traps:'🔥❗🎯',mem:'📝🔁',color:'🔴'},
+'t5_11':{sphere:'⚖️💰',lvl:'📗',imp:2,traps:'🔥',mem:'📝',color:'🟡'},
+'t5_12':{sphere:'⚖️📚',lvl:'📘',imp:1,traps:'❗',mem:'⚡',color:'🟢'},
+'t5_13':{sphere:'⚖️🏛️',lvl:'📗',imp:3,traps:'🔥❗',mem:'📝🔁',color:'🟡'},
+'t5_14':{sphere:'⚖️🌍',lvl:'📘',imp:1,traps:'❗',mem:'⚡',color:'🟢'},
+'t5_15':{sphere:'⚖️',lvl:'📕',imp:3,traps:'🔥☠️🧩❗🎯',mem:'📝🔁',color:'🔴'},
+'t5_16':{sphere:'⚖️',lvl:'📗',imp:2,traps:'🔥🧩',mem:'📝',color:'🟡'},
+'t5_17':{sphere:'⚖️🏛️',lvl:'📗',imp:2,traps:'🔥',mem:'📝',color:'🟡'},
+'t5_18':{sphere:'⚖️',lvl:'📕',imp:3,traps:'🔥❗🎯',mem:'📝🔁',color:'🟠'},
+'t5_19':{sphere:'⚖️🏛️',lvl:'📕',imp:2,traps:'🔥🧩',mem:'📝🧠',color:'🟠'},
+'t5_20':{sphere:'⚖️🏛️',lvl:'📗',imp:2,traps:'🔥☠️',mem:'📝🔁',color:'🟡'},
+};
+
 const TDATA={
 't1_1':{
   terms:["Человек", "Индивид", "Личность", "Индивидуальность", "Потребность", "Интерес", "Социализация"],
@@ -1714,11 +1827,23 @@ net.on('click',params=>{
   }
 
   const keysHtml=nd.keys?.map(k=>`<span style="display:inline-block;padding:2px 6px;background:#21262d;border-radius:8px;font-size:10px;color:#8b949e;margin:2px">${k}</span>`).join('')||'';
+  const tg=TAGS[nid]||null;
+  const dc=tg?DIFF_COL[tg.color]:null;
+  const tagHtml=tg?`<div class="dtags">
+    <span class="dtag" title="Сфера общества">${tg.sphere}</span>
+    <span class="dtag" title="Уровень сложности">${tg.lvl}</span>
+    <span class="dtag dtag-imp" title="Важность для ЕГЭ">${IMP_STR[tg.imp]}</span>
+    ${tg.traps?`<span class="dtag dtag-traps" title="Ловушки ЕГЭ">${tg.traps}</span>`:''}
+    <span class="dtag dtag-mem" title="Тип запоминания">${tg.mem}</span>
+    <span class="dtag dtag-diff" style="background:${dc?.bg||'#21262d'};color:${dc?.c||'#c9d1d9'}" title="Сложность">${tg.color} ${dc?.label||''}</span>
+  </div>`:'';
+
 
   document.getElementById('nd').innerHTML=`
     ${nd.num?`<div class="dnum">Тема ${nd.num}</div>`:''}
     <div class="dt">${nd.short||nd.label.replace(/\n/g,' ')}</div>
     <span class="dtype" style="background:${s.bg};color:${s.c}">${nd.type==='section'?'РАЗДЕЛ':'ТЕМА'}</span>
+    ${tagHtml}
     <div class="ddesc">${nd.desc||''}</div>
     ${nd.ege?`<div class="dege">🎯 ${nd.ege}</div>`:''}
     ${keysHtml?`<div style="margin-bottom:10px">${keysHtml}</div>`:''}
@@ -1761,6 +1886,46 @@ document.getElementById('filters').addEventListener('click',e=>{
     NODES.filter(n=>n.sec===tp&&n.type==='topic').forEach(n=>visNodes.update({id:n.id,hidden:!active.has(tp)}));
   }
 });
+
+
+// ── DIFFICULTY COLOR MODE ─────────────────────────────────────
+let colorMode='section';
+function applyColorMode(mode){
+  colorMode=mode;
+  document.querySelectorAll('.diff-btn').forEach(b=>{
+    b.classList.toggle('active',b.dataset.mode===mode);
+  });
+  visNodes.forEach(vn=>{
+    const nd=vn._d;
+    if(!nd||nd.type!=='topic')return;
+    if(mode==='difficulty'){
+      const tg=TAGS[nd.id];
+      if(tg){
+        const dc=DIFF_COL[tg.color];
+        visNodes.update({id:nd.id,color:{background:dc.bg,border:dc.c,highlight:{background:dc.bg,border:dc.c}}});
+      }
+    } else {
+      visNodes.update({id:nd.id,color:nc(nd)});
+    }
+  });
+}
+
+// ── IMPORTANCE FILTER ────────────────────────────────────────
+let impFilter=0;
+function applyImpFilter(lvl){
+  impFilter=impFilter===lvl?0:lvl;
+  document.querySelectorAll('.imp-btn').forEach(b=>{
+    b.classList.toggle('active',+b.dataset.imp===impFilter);
+  });
+  visNodes.forEach(vn=>{
+    const nd=vn._d;
+    if(!nd||nd.type!=='topic')return;
+    const tg=TAGS[nd.id];
+    const nodeImp=tg?tg.imp:0;
+    visNodes.update({id:nd.id,hidden:impFilter>0&&nodeImp<impFilter});
+  });
+  upStats();
+}
 
 // ── SECTION TABS ─────────────────────────────────────────────────
 const STABS=[
